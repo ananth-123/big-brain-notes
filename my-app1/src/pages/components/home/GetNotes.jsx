@@ -1,4 +1,4 @@
-import React,{ useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "firebase/app";
 import "../../firebase";
 
@@ -7,29 +7,37 @@ import NotesLoader from "./NotesLoader";
 
 export default function GetNotes() {
     const Loader = NotesLoader(Notes);
-    const [state,setState] = useState({
-        isLoaded:false,
-        notes:null,
-    });
-    const notes = [];
+
+    const [state, setState] = useState({
+        isLoaded: false,
+        notes: null,
+        title: null,
+    })
+    const notes = []
+    const title = []
 
     useEffect(() => {
         var db = firebase.firestore();
-        db.collection("notes")
+        db.collection("notes", "title")
             .get()
             .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const docData = {
-                id: doc.id,
-                created: doc.data().created,
-                note: doc.data().note,           
-                };
-                notes.push(docData);
+                querySnapshot.forEach((doc) => {
+                    const docData = {
+                        id: doc.id,
+                        created: doc.data().created,
+                        note: doc.data().note,
+                        title: doc.data().title,
+                    };
+                    notes.push(docData);
+                    title.push(docData);
+                });
+                setState({ isLoaded: true, notes: notes, title: title });
             });
-            setState({ isLoaded:true,notes: notes });
-        });
-},[setState]);
-return <div className="container mt-5">
-    <Loader isLoaded={ state.isLoaded } notes={ state.notes } />
-</div>;
+    }, [setState]);
+
+    return (
+        <div className = "container mt-5">
+            <Loader isLoaded = {state.isLoaded} notes = {state.notes} title = {state.title} />
+        </div>
+    );
 }

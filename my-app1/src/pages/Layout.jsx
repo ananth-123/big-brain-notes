@@ -4,11 +4,26 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import firebase from "firebase/app";
 import { useHistory } from "react-router-dom";
+import Avatar from "@material-ui/core/Avatar";
+
+import React from "react";
+import { makeStyles } from "@material-ui/core/styles";
 
 export default function Layout(props) {
-  const history = useHistory();
-  function logout() {
-    firebase
+    const useStyles = makeStyles({
+        rightToolbar: {
+          marginLeft: "auto",
+          marginRight: -12
+        },
+        centerToolbar: {
+            marginRight: -12,
+            marginLeft: 400
+          },
+      })
+    const classes = useStyles();
+    const history = useHistory();
+    function logout() {
+        firebase
       .auth()
       .signOut()
       .then(() => {
@@ -18,25 +33,30 @@ export default function Layout(props) {
       .catch((error) => {
         // An error happened.
       });
-  }
+    }
 
-  return (
-    <>
-      <AppBar position="static">
-        <Toolbar className="d-flex justify-content-between">
-          <Typography variant="h6" className="font-weight-bold">
-            Big Brain Notes
-          </Typography>
-          <Button
-            variant="contained"
-            className="font-weight-bold text-capitalize"
-            onClick={logout}
-          >
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
-      {props.children}
-    </>
-  );
+    return(
+        <>
+            <AppBar position = "static">
+                <Toolbar className = "d-flex">
+                  <Avatar src = "KDB.jpg" />
+                    <section className = { classes.centerToolbar }>
+                        <Typography variant = "h6">
+                            Big Brain Notes
+                        </Typography>
+                    </section>
+                    <section className={classes.rightToolbar}>
+                        <Button
+                            variant = "contained"
+                            className = "text-capitalize"
+                            onClick = {logout}
+                        >
+                            Logout
+                        </Button>
+                    </section>
+                </Toolbar>
+            </AppBar>
+            {props.children}
+        </>
+    );
 }
